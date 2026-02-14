@@ -74,7 +74,7 @@ const SharePreview = () => {
                          loaded with this project data. 
                        */}
                       <div className="bg-white p-10 rounded text-center">
-                          <img src={project.preview || "https://placehold.co/800x200?text=Preview"} alt="Preview" className="max-w-full rounded shadow-lg" />
+                          <img src={project.previewImage || "https://placehold.co/800x200?text=Preview"} alt="Preview" className="max-w-full rounded shadow-lg" />
                           <p className="mt-4 text-sm text-slate-400">Live interactive preview requires being in the Editor.</p>
                       </div>
                  </div>
