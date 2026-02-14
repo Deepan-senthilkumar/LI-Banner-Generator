@@ -1,6 +1,7 @@
 import dataProvider from './dataProvider';
 import { ROLES } from '../utils/permissions';
 import apiClient from './apiClient';
+import { getSupabaseClient } from './supabaseClient';
 import {
   isValidEmail,
   sanitizeObjectStrings,
@@ -12,6 +13,57 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 const PROVIDER = import.meta.env.VITE_DATA_PROVIDER || 'local';
 
 const normalizeRole = (role) => (role === ROLES.ADMIN ? ROLES.ADMIN : ROLES.USER);
+const asBoolean = (value) => value === true || value === 'true';
+
+const normalizeSupabaseUser = (profile = {}, authUser = null) => {
+  const isPro = asBoolean(profile.isPro ?? profile.is_pro) || profile.plan === 'pro';
+  return {
+    id: profile.id || authUser?.id,
+    email: profile.email || authUser?.email || '',
+    name: profile.name || authUser?.user_metadata?.name || authUser?.user_metadata?.full_name || '',
+    role: normalizeRole(profile.role),
+    plan: profile.plan || (isPro ? 'pro' : 'free'),
+    is_pro: isPro,
+    isPro,
+    createdAt: profile.createdAt || profile.created_at || null,
+    updatedAt: profile.updatedAt || profile.updated_at || null,
+  };
+};
+
+const ensureSupabaseProfile = async (supabase, authUser, fallbackName = '') => {
+  const { data: existing, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', authUser.id)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message || 'Failed to load user profile');
+  }
+
+  if (existing) return normalizeSupabaseUser(existing, authUser);
+
+  const insertPayload = {
+    id: authUser.id,
+    email: authUser.email || '',
+    name: fallbackName || authUser.user_metadata?.name || authUser.user_metadata?.full_name || '',
+    role: ROLES.USER,
+    plan: 'free',
+    is_pro: false,
+  };
+
+  const { data: created, error: createError } = await supabase
+    .from('users')
+    .upsert(insertPayload, { onConflict: 'id' })
+    .select('*')
+    .single();
+
+  if (createError) {
+    throw new Error(createError.message || 'Failed to create user profile');
+  }
+
+  return normalizeSupabaseUser(created, authUser);
+};
 
 export const authService = {
   login: async (email, password) => {
@@ -52,6 +104,24 @@ export const authService = {
         return { user: { ...user, role: normalizeRole(user.role) }, token };
       }
       throw new Error('Invalid email or password');
+    }
+
+    if (PROVIDER === 'supabase') {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: safeEmail,
+        password,
+      });
+
+      if (error) throw new Error(error.message || 'Invalid email or password');
+
+      const token = data.session?.access_token || '';
+      if (token) localStorage.setItem('token', token);
+
+      const user = await authService.getCurrentUser();
+      if (!user) throw new Error('Login succeeded but user profile is not available');
+
+      return { user, token };
     }
 
     const formData = new URLSearchParams();
@@ -102,6 +172,44 @@ export const authService = {
       });
     }
 
+    if (PROVIDER === 'supabase') {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase.auth.signUp({
+        email: safeEmail,
+        password: userData.password,
+        options: {
+          data: {
+            name: safePayload.name,
+          },
+        },
+      });
+
+      if (error) throw new Error(error.message || 'Registration failed');
+
+      if (!data.session) {
+        throw new Error('Account created. Please verify your email, then sign in.');
+      }
+
+      if (data.session?.access_token) {
+        localStorage.setItem('token', data.session.access_token);
+      }
+
+      if (data.user) {
+        const profile = await ensureSupabaseProfile(supabase, data.user, safePayload.name);
+        return profile;
+      }
+
+      return {
+        id: null,
+        email: safeEmail,
+        name: safePayload.name,
+        role: ROLES.USER,
+        plan: 'free',
+        is_pro: false,
+        isPro: false,
+      };
+    }
+
     const created = await apiClient.post(`${API_URL}/auth/register`, {
       email: safeEmail,
       password: userData.password,
@@ -111,16 +219,37 @@ export const authService = {
   },
 
   getCurrentUser: async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
+    if (PROVIDER === 'local') {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
 
-    if (PROVIDER === 'local' && token.startsWith('mock_token_')) {
-      const userId = token.replace('mock_token_', '');
-      const user = await dataProvider.get('users', userId);
-      return user ? { ...user, role: normalizeRole(user.role) } : null;
+      if (token.startsWith('mock_token_')) {
+        const userId = token.replace('mock_token_', '');
+        const user = await dataProvider.get('users', userId);
+        return user ? { ...user, role: normalizeRole(user.role) } : null;
+      }
+      return null;
+    }
+
+    if (PROVIDER === 'supabase') {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw new Error(error.message || 'Failed to check auth session');
+
+      const session = data?.session;
+      if (!session?.user) return null;
+
+      if (session.access_token) {
+        localStorage.setItem('token', session.access_token);
+      }
+
+      return ensureSupabaseProfile(supabase, session.user);
     }
 
     try {
+      const token = localStorage.getItem('token');
+      if (!token) return null;
+
       const user = await apiClient.get(`${API_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -136,8 +265,14 @@ export const authService = {
   },
 
   logout: () => {
+    if (PROVIDER === 'supabase') {
+      const supabase = getSupabaseClient();
+      supabase.auth.signOut().catch(() => {});
+    }
     localStorage.removeItem('token');
   },
+
+  getToken: () => localStorage.getItem('token'),
 
   isAuthenticated: () => !!localStorage.getItem('token'),
 };
