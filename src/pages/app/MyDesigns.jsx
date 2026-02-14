@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { projectService } from '../../services/projectService';
+import { shareService } from '../../services/shareService';
 import ProjectCard from '../../features/dashboard/components/ProjectCard';
-import { Loader2, Plus, Search } from 'lucide-react';
+import { Loader2, Plus, Search, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const MyDesigns = () => {
@@ -10,6 +11,9 @@ const MyDesigns = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [sharingProjectId, setSharingProjectId] = useState(null);
+  const [shareMessage, setShareMessage] = useState('');
+  const [shareError, setShareError] = useState('');
 
   useEffect(() => {
     if (user?.id) {
@@ -39,6 +43,33 @@ const MyDesigns = () => {
     const newProject = await projectService.duplicate(id, user.id);
     setProjects([newProject, ...projects]);
   };
+
+  const setTemporaryMessage = (setter, message) => {
+    setter(message);
+    window.setTimeout(() => setter(''), 2600);
+  };
+
+  const handleShare = async (projectId) => {
+    setShareError('');
+    setSharingProjectId(projectId);
+    try {
+      const share = await shareService.createShareLink(projectId);
+      if (!share?.shareId) throw new Error('Share link was not generated');
+
+      const shareUrl = `${window.location.origin}/share/${share.shareId}`;
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+      } else {
+        window.prompt('Copy this share link', shareUrl);
+      }
+
+      setTemporaryMessage(setShareMessage, 'Share link copied to clipboard');
+    } catch (err) {
+      setTemporaryMessage(setShareError, err.message || 'Failed to create share link');
+    } finally {
+      setSharingProjectId(null);
+    }
+  };
   
   const filteredProjects = projects.filter(p => 
       p.title?.toLowerCase().includes(search.toLowerCase())
@@ -56,6 +87,16 @@ const MyDesigns = () => {
         <div>
            <h1 className="text-2xl font-bold dark:text-white">My Designs</h1>
            <p className="text-slate-500 dark:text-slate-400">Manage your saved LinkedIn banners</p>
+           {shareMessage ? (
+             <p className="mt-2 inline-flex items-center gap-1 text-emerald-600 text-sm">
+               <CheckCircle2 size={15} /> {shareMessage}
+             </p>
+           ) : null}
+           {shareError ? (
+             <p className="mt-2 inline-flex items-center gap-1 text-red-600 text-sm">
+               <AlertCircle size={15} /> {shareError}
+             </p>
+           ) : null}
         </div>
         
         <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -88,6 +129,8 @@ const MyDesigns = () => {
                   project={project} 
                   onDelete={handleDelete}
                   onDuplicate={handleDuplicate}
+                  onShare={handleShare}
+                  isSharing={sharingProjectId === project.id}
                />
            ))}
         </div>
