@@ -6,22 +6,20 @@ const TABLE_INVITES = 'team_invites';
 const TABLE_PROJECTS = 'user_projects';
 const PROVIDER = import.meta.env.VITE_DATA_PROVIDER || 'local';
 
-const uniqueById = (items = []) => {
-  const seen = new Set();
-  return items.filter((item) => {
-    const id = item?.id;
-    if (!id || seen.has(id)) return false;
-    seen.add(id);
-    return true;
-  });
-};
-
-const sortByUpdatedDesc = (items = []) => (
+const byUpdatedDesc = (items = []) => (
   [...items].sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0))
 );
 
-const hydrateUsersMap = async (userIds = []) => {
-  const rows = await Promise.all(userIds.map(async (id) => {
+const findLocalTeam = (teams = [], userId) => (
+  teams.find((team) => (
+    team.ownerId === userId
+    || (Array.isArray(team.members) && team.members.some((member) => member.id === userId))
+  ))
+);
+
+const getUsersMap = async (ids = []) => {
+  const uniqueIds = [...new Set(ids.filter(Boolean))];
+  const users = await Promise.all(uniqueIds.map(async (id) => {
     try {
       return await dataProvider.get('users', id);
     } catch {
@@ -29,33 +27,10 @@ const hydrateUsersMap = async (userIds = []) => {
     }
   }));
 
-  return rows.reduce((acc, user) => {
+  return users.reduce((acc, user) => {
     if (user?.id) acc[user.id] = user;
     return acc;
   }, {});
-};
-
-const toDisplayMembers = (team, usersById, membershipRows = []) => {
-  const ownerId = team?.ownerId;
-  const embeddedMembers = Array.isArray(team?.members) ? team.members : [];
-
-  const derivedMembers = membershipRows.map((member) => ({
-    id: member.userId,
-    role: member.role || 'member',
-  }));
-
-  const base = uniqueById([
-    ownerId ? { id: ownerId, role: 'owner' } : null,
-    ...embeddedMembers.map((member) => ({ id: member.id, role: member.role || 'member' })),
-    ...derivedMembers,
-  ].filter(Boolean));
-
-  return base.map((member) => ({
-    id: member.id,
-    name: usersById[member.id]?.name || member.name || 'Team Member',
-    email: usersById[member.id]?.email || member.email || '',
-    role: member.role,
-  }));
 };
 
 export const teamService = {
@@ -64,19 +39,23 @@ export const teamService = {
     const teams = await dataProvider.getAll(TABLE_TEAMS, {});
 
     if (PROVIDER === 'local') {
-      const localTeam = (teams || []).find((team) => (
-        team.ownerId === userId
-        || (Array.isArray(team.members) && team.members.some((member) => member.id === userId))
-      ));
+      const team = findLocalTeam(teams || [], userId);
+      if (!team) return null;
 
-      if (!localTeam) return null;
-      const memberIds = uniqueById([
-        { id: localTeam.ownerId },
-        ...(localTeam.members || []).map((member) => ({ id: member.id })),
-      ]).map((item) => item.id);
-      const usersById = await hydrateUsersMap(memberIds);
-      const members = toDisplayMembers(localTeam, usersById, []);
-      return { ...localTeam, members, memberCount: members.length };
+      const members = Array.isArray(team.members) ? team.members : [];
+      const usersById = await getUsersMap([team.ownerId, ...members.map((member) => member.id)]);
+      const hydratedMembers = [
+        { id: team.ownerId, role: 'owner' },
+        ...members.map((member) => ({ id: member.id, role: member.role || 'member' })),
+      ]
+        .filter((member, index, arr) => arr.findIndex((row) => row.id === member.id) === index)
+        .map((member) => ({
+          ...member,
+          name: usersById[member.id]?.name || member.name || 'Team Member',
+          email: usersById[member.id]?.email || member.email || '',
+        }));
+
+      return { ...team, members: hydratedMembers, memberCount: hydratedMembers.length };
     }
 
     const ownedTeam = (teams || []).find((team) => team.ownerId === userId);
@@ -92,12 +71,17 @@ export const teamService = {
     if (!team) return null;
 
     const membershipRows = await dataProvider.getAll(TABLE_TEAM_MEMBERS, { teamId: team.id });
-    const memberIds = uniqueById([
-      { id: team.ownerId },
-      ...(membershipRows || []).map((member) => ({ id: member.userId })),
-    ]).map((item) => item.id);
-    const usersById = await hydrateUsersMap(memberIds);
-    const members = toDisplayMembers(team, usersById, membershipRows || []);
+    const usersById = await getUsersMap([team.ownerId, ...(membershipRows || []).map((member) => member.userId)]);
+    const members = [
+      { id: team.ownerId, role: 'owner' },
+      ...(membershipRows || []).map((member) => ({ id: member.userId, role: member.role || 'member' })),
+    ]
+      .filter((member, index, arr) => arr.findIndex((row) => row.id === member.id) === index)
+      .map((member) => ({
+        ...member,
+        name: usersById[member.id]?.name || 'Team Member',
+        email: usersById[member.id]?.email || '',
+      }));
 
     return { ...team, members, memberCount: members.length };
   },
@@ -119,7 +103,7 @@ export const teamService = {
           role: 'owner',
         });
       } catch {
-        // Membership can already exist or be restricted by policy; ignore for idempotency.
+        // Ignore if policy denies owner row insertion or row already exists.
       }
       return teamService.getMyTeam(userId);
     }
@@ -150,11 +134,6 @@ export const teamService = {
 
     if (teammateIds.length === 0) return [];
 
-    const ownerMeta = (team.members || []).reduce((acc, member) => {
-      acc[member.id] = member;
-      return acc;
-    }, {});
-
     let projects = [];
     if (PROVIDER === 'supabase') {
       try {
@@ -171,10 +150,15 @@ export const teamService = {
       projects = (allProjects || []).filter((project) => teammateIds.includes(project.userId));
     }
 
-    return sortByUpdatedDesc(projects).map((project) => ({
+    const owners = (team.members || []).reduce((acc, member) => {
+      acc[member.id] = member;
+      return acc;
+    }, {});
+
+    return byUpdatedDesc(projects).map((project) => ({
       ...project,
-      ownerName: ownerMeta[project.userId]?.name || 'Team Member',
-      ownerEmail: ownerMeta[project.userId]?.email || '',
+      ownerName: owners[project.userId]?.name || 'Team Member',
+      ownerEmail: owners[project.userId]?.email || '',
     }));
   },
 };
