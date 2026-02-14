@@ -2,11 +2,12 @@
 
 This schema is designed to match your current feature-based frontend and localStorage tables while upgrading to production-ready Postgres + RLS.
 
-## Migration File
+## Migration Files
 
 - `supabase/migrations/20260214_0001_initial_schema.sql`
+- `supabase/migrations/20260214_0002_team_visibility_policies.sql`
 
-Run this file in Supabase SQL editor (or Supabase CLI migrations).
+Run both files in order in Supabase SQL editor (or Supabase CLI migrations).
 
 ## Table Mapping (Current App -> Supabase)
 
