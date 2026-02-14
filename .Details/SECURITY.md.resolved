@@ -1,0 +1,42 @@
+# 🔒 Security Architecture
+
+This document outlines the security measures implemented in LinkedIn Banner Studio.
+
+## 🛡️ Frontend Security (React)
+
+### 1. XSS Prevention
+- **React Escaping**: We rely on React's auto-escaping for all data binding.
+- **Dangerous HTML**: Example usage of `dangerouslySetInnerHTML` is strictly forbidden unless sanitized with `DOMPurify`.
+- **URL Validation**: All user-provided URLs (images) are validated to be `http/https` protocols only.
+
+### 2. Content Security Policy (CSP)
+Production [index.html](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/index.html) headers should include:
+```html
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: https://*.cloudinary.com; script-src 'self'; style-src 'self' 'unsafe-inline';">
+```
+
+### 3. Secure Storage
+- **Tokens**: We store `accessToken` in memory (React Context) and `refreshToken` in an **HttpOnly Cookie** (set by backend).
+- **LocalStorage**: Only used for non-sensitive user preferences (e.g., theme, last template used).
+
+## 🔐 Backend Security (FastAPI)
+
+### 1. Authentication
+- **Hashing**: Argon2 via `passlib` for password storage.
+- **Tokens**: JWT (JSON Web Tokens) with short expiry (15 min access, 7 days refresh).
+- **Algorithm**: HS256 (or RS256 for stronger asymmetry).
+
+### 2. API Protection
+- **Rate Limiting**: `slowapi` middleware to limit requests (e.g., 5 login attempts/minute).
+- **CORS**: Strict allow-list of frontend domains (no `*`).
+- **Input Validation**: Pydantic models for strict type checking and validation.
+
+### 3. File Uploads
+- **Validation**: Check Magic Bytes (MIME type) effectively.
+- **Size Limit**: 2MB max for profile pictures.
+- **Sanitization**: Rename files to UUIDs to prevent directory traversal.
+
+## 🔍 Security Checklist
+- [ ] `npm audit` runs in CI/CD.
+- [ ] Backend dependencies pinned with hashes (pip-tools or poetry).
+- [ ] No secrets committed to git (`.env` in [.gitignore](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/.gitignore)).

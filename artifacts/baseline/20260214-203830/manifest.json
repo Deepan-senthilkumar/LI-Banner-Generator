@@ -1,0 +1,16 @@
+{
+    "timestamp":  "2026-02-14T20:39:40.0709722+05:30",
+    "label":  "",
+    "node":  "v24.13.0",
+    "npm":  "11.6.2",
+    "git":  {
+                "branch":  null,
+                "commit":  null
+            },
+    "steps":  [
+                  "lint",
+                  "test",
+                  "build"
+              ],
+    "outputDir":  "artifacts\\baseline\\20260214-203830"
+}

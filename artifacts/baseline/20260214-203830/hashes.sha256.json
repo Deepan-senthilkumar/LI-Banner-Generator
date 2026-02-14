@@ -1,0 +1,350 @@
+[
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\App.jsx",
+        "sha256":  "1B0B25D711107C264B636087C617F5A3BFF58ACA9865FF819BCB418BB9A38416"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\index.css",
+        "sha256":  "42070E0B45BB201B2B838A52AAAA6E965F964E0B542D97F1FE517FE59C4B75A8"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\main.jsx",
+        "sha256":  "2980515B81743A23077404E4D5F90AD94FCDB8362DE8C71881BFC263F5858CBB"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\assets\\react.svg",
+        "sha256":  "35EF61ED53B323AE94A16A8EC659B3D0AF3880698791133F23B084085AB1C2E5"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\components\\auth\\AdminRoute.jsx",
+        "sha256":  "124609DC645F320533310C99FBB27BD2CD58B21AC01C491DF2DE461ED2509BE6"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\components\\auth\\ProtectedRoute.jsx",
+        "sha256":  "AF2CB2B09CB3724E00E789404DBC9A8F5F25067BF72F40D02B8C071160243543"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\components\\common\\AppTracker.jsx",
+        "sha256":  "D2922FB4076814D47293188179083A3643091758D765861D2E38E1A6BC0A1A9C"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\components\\common\\ErrorBoundary.jsx",
+        "sha256":  "BB968EF129CDFFCCAA4610C85AEDB2DC701DBD852E7222B209FB9EAF02C4EA3E"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\components\\common\\Tour.jsx",
+        "sha256":  "B934D572D45C1A5DD88917935EA700A5E782EAA904D7480027E69B2F08B3E8D0"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\components\\layout\\AdminLayout.jsx",
+        "sha256":  "3E599209BF5CC1A02E67316D53CD52A459A2E70F37CEB784CAD4350473D12C0E"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\components\\layout\\Navbar.jsx",
+        "sha256":  "91E8915538909140FC83E5AEA561E366FB3AFF4945EBD30850778A03B6F1731F"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\context\\AuthContext.jsx",
+        "sha256":  "92DD2C910562AD56A2C29E590C245F72FDC8B5E48F69D8224CF8D92941DC1B97"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\admin\\components\\StatCard.jsx",
+        "sha256":  "F77D2CD1CD3310CAD9C7D617E6B6298AAE769428508035DEB6E9684B67D56626"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\admin\\hooks\\useAdminData.js",
+        "sha256":  "B3B80AAF03C916D4C551F8C3D318A395EAB5C70704487240EE7CA365FA70395E"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\admin\\services\\adminPanelService.js",
+        "sha256":  "010DE4F332C9EECAC2F39C2FAADAEB300D23060798E9A1E61BF7C36D7F2C6140"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\auth\\Login.jsx",
+        "sha256":  "71154B23DE91E9E2D3FEEB2AED8BF6DF92149583F779ACF7F1E8A757AC5AA6A3"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\auth\\Signup.jsx",
+        "sha256":  "B736E25E944ECEA219CC401C01D1F5385696C9DF8C9796F6347CD0DD668151CA"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\brand\\LogoUploader.jsx",
+        "sha256":  "C2F1F46B77209CF53E37255DDCAA2342503E854345723B4AAB95F3541BCA8637"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\brand\\components\\ColorPaletteManager.jsx",
+        "sha256":  "FB16B0F92C250FE2262C5E37E27494B41B53BC2E2F099DB2D72F940A1436AB3E"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\dashboard\\Dashboard.jsx",
+        "sha256":  "CFAE2608B19998E5EA64EBAF1A54261DBC0485225DC7301EF0C099ACDC338005"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\dashboard\\DashboardLayout.jsx",
+        "sha256":  "568F5F76F54CB8AC253F20D9E613FE0EFFBF87ABA25FBB8C48264E9A18349348"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\dashboard\\components\\ProjectCard.jsx",
+        "sha256":  "A932BF042CB3A4FEF4FF8A0D93ADADF51BA82C3799C77134391169BD0CF28861"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\editor\\BannerEditor.jsx",
+        "sha256":  "9AFAC7342F8E2A6258F7A897A525FD02F78DBB54CAA9829106E6148FFDB8FA03"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\editor\\components\\BannerCanvas.jsx",
+        "sha256":  "6CAF4990AC148F7ADCBF379C2A4B7AC43813C51B782D6A35A9DF5AB8A57DD28E"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\editor\\components\\ControlsPanel.jsx",
+        "sha256":  "2C19995C06DE7E76F361F6A5DAB09EC1AC3DD869E3C5780EF96100BA06D84565"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\editor\\context\\EditorContext.jsx",
+        "sha256":  "33AF28E88506753BF96192712E09D207FA046B5BCB0CAA9A0CFD935B183AD477"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\editor\\data\\predefinedAssets.js",
+        "sha256":  "48746C62CC7A9A16CB4A8F4B7283D23086043C7081AA1EDEC65EEE897FC47771"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\editor\\hooks\\useAutosave.js",
+        "sha256":  "0AF09D542EA6DFB1247DE03CD70A823F2E04AD063A8152F595F7C63CE38A7D13"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\editor\\hooks\\useBannerBuilder.js",
+        "sha256":  "D795D1D49B4BE9FE6F51D9DBCA1311F90022B3A43A2C46CA2D5CF19534F63D66"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\growth\\data\\toolsCatalog.js",
+        "sha256":  "0EE35A4D2065EA05094A8C8F03E70CE3BB65F12E48D7C1C481A986B70DDA794F"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\features\\templates\\components\\TemplateCard.jsx",
+        "sha256":  "F0B3796C27091F4A52B926001BFC50413A0C0D033FE427B40E5DC04C91E2FE9B"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\hooks\\useDebounce.js",
+        "sha256":  "EB0AEC76B40C44F05CDEE0751625852809157385140A20FA17A0351FE33E0A8F"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\hooks\\useEntitlements.js",
+        "sha256":  "78352C9F6B25163B541D7349152991995284E53815A861267C43ACC7EBF629B0"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\admin\\AdminDashboard.jsx",
+        "sha256":  "446FBF9792A938E401D6E62E116A82B064625CC4CDECF31E20ED8DD6A1C6C528"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\admin\\Analytics.jsx",
+        "sha256":  "3FB2EC3CAD9FAA9E405CE5B1535C6314F5DB3D058A2EB2A94FCCA9B580382388"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\admin\\AuditLogs.jsx",
+        "sha256":  "6652559744FD28AD97ADD61F553B51A60D2EF8620A664EA8A167A8E365F0A06C"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\admin\\Moderation.jsx",
+        "sha256":  "2F155B64F8351BAAEA633D90E32D3F1BEF65CE409D4003ACD5045B09CA22EFE9"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\admin\\Projects.jsx",
+        "sha256":  "ECFA94973B09FF672299D4823D484A244DEA0A26657311C6393489A46B788319"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\admin\\Templates.jsx",
+        "sha256":  "51024218E6F0CF4BA732B4648F2B183897E00AA646DDFBB568DB103DD2EE33FD"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\admin\\Users.jsx",
+        "sha256":  "4F067B20FEDA7E69A318C6949D6330BD4D6804FF8CB47CE8348328784A940074"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\BrandKit.jsx",
+        "sha256":  "E7EFF6C24308B89FC66474FA9305C0998D4F975CEE136AFEA33E54B4A5C956A9"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\MyDesigns.jsx",
+        "sha256":  "BCEBAAD03E0BE2B0C4FC5FA7CE8AB3D7C04EC9D15B5A4BF0D717FE3E756963FA"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\Pricing.jsx",
+        "sha256":  "754F4D826E35FF8961BBF57A137B8C017A02F0448A6A3ADF39744A66E66B8BAD"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\Settings.jsx",
+        "sha256":  "4E57A9FF74E4D9E3B6FF036D1953E718C9FBFD2C3319BEE4871EBDC3A91A722B"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\SharedProjects.jsx",
+        "sha256":  "E471956E5471A5B0B4986394B8DE34A5019376FE5D0043F83AA7F75F1AB247FC"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\Team.jsx",
+        "sha256":  "683033718DF6A10796A722AE43C2A286CC1395A40F73C122A2445BD5E7B1D534"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\TemplateLibrary.jsx",
+        "sha256":  "AE3B80F82800F76B6733222D1F356C94B1EF098F018D130A3D328249AED72AF5"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\ToolsHub.jsx",
+        "sha256":  "CF5F9DEE733DE913CB8ACE35AF29C2EBE232F768649E2CEED45EDFFE59B7A89B"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\app\\ToolWorkspace.jsx",
+        "sha256":  "8F8D2F7A6BFE3B5B4D88390F522BBC5776825830899C99F26DEAF1E86D02F7BE"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\landing\\Home.jsx",
+        "sha256":  "7370A60FEB5324D0D278CC4D30720C5A33C4C0AF563D7929F53387A03C679D28"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\public\\About.jsx",
+        "sha256":  "6F508DB0429F67B7E3CE0EB40CBEBE93DDF8F145046FE117FA554A4B89E8D4A1"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\public\\Contact.jsx",
+        "sha256":  "475DF589ACBDC04C47AEBEAA1984754DC7D4998B4886056E976FE060F38C7763"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\public\\PrivacyPolicy.jsx",
+        "sha256":  "3C66A5311997599C0CD6837FF9FCB8CC4B93FE30307D273BA9740B8FFFAE4FDD"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\public\\SharePreview.jsx",
+        "sha256":  "BFD1B5F7F144C652EB59377F2D6073AA231A896EA98D99799ACD4D10F132D4A9"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\pages\\public\\TermsOfService.jsx",
+        "sha256":  "A658B2C43E8C1F32195A6333630C461989AF82D746164A4B1B8AA5BF6DB09788"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\adminService.js",
+        "sha256":  "73C5A53E256328CFDAD13C1E8BF980ECA9A8066D7560FB3158EA4F622BF71D40"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\aiAssetService.js",
+        "sha256":  "EF569CAD5DFFDD279F36DFDD75E4FDF4A8E82276E5D62AD27C04E5B84A0AE147"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\analyticsService.js",
+        "sha256":  "38FD779CD0A162C0F124D4136715B13A5097B7CFCFD819F44769EE60218317A2"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\analyticsTracker.js",
+        "sha256":  "9B21216D8CB3B37ECE19395BFB65719FF0A969696580EDECCF96A3BF31D9C961"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\apiClient.js",
+        "sha256":  "FFCA31ADF8B2DE6B468CFBF2C3C9480FC5D2A5ACAEAC79ED3FE0B2A0E5C84EDA"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\auditService.js",
+        "sha256":  "C0533C365DE71F3F0A99CFCE9D5EFB6354D42E3739E330BFB7D34825CE757931"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\authService.js",
+        "sha256":  "23779F4766A00DE7C8087D4140E435B892E5F9F0EE33EA4E2B1488016B7B7AF7"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\brandService.js",
+        "sha256":  "35A8DD335E81555D036F25D64F33E68C64D83C0D3248E2912F8E7381FBD663D6"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\dataProvider.js",
+        "sha256":  "BC235E5C81FBF9E27C731D36351C0B87C0A2A4B2AFAB332425061384F5302431"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\draftService.js",
+        "sha256":  "2DAFEE42F944282EBABB7AE3905AA11B8441061FF742AB24E2B1810121D881C4"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\editorContentService.js",
+        "sha256":  "1C27CE4084D310D50A923252F536548942B14DC1A6750AB51F250F9BFE0CE618"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\entitlementsService.js",
+        "sha256":  "4CAF38869FF9CDB01FBF9C117A621343540D2182E552CB700591AE28B9E6D895"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\growthToolsService.js",
+        "sha256":  "27F51B8F0BDDFF8551D1B595DC292CA5E86DA3B03EE59783CB078512E5FCCF61"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\monitoringService.js",
+        "sha256":  "9C46146C89C7340FB048F1A5636FA754F94222AEBC0D7127F6403835998ABCDE"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\paymentService.js",
+        "sha256":  "5CA59F603BE63D9E5B6208CEF42FAD01C6DA6D22375FD992ADDF1DF832410AC9"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\projectService.js",
+        "sha256":  "FA363A700F3AE1FF309C48F0A11D3421E42B2DA11FA06DB05BEE61D757FAFD8F"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\shareService.js",
+        "sha256":  "8F913C37E4889931DEBD1E9E628E58CD4AD4A920869E672CA1314DF1AA1A21F1"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\storage.js",
+        "sha256":  "123965643A1CDDA9FB00AD7DEAA7345BC9ECAC38A557702B4BA9AD48B87E781F"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\teamService.js",
+        "sha256":  "DE5182F83250341C02D7B7F3B4BC7E083CF6FA5C3DB54FB7216CA5F6067A101B"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\templateService.js",
+        "sha256":  "69CABEB64DE8B80EDA3EBABD47B54CA0C6541F5D460DCD1562FDF758BA7F63BC"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\services\\providers\\supabaseProvider.js",
+        "sha256":  "F3E6CFF523EEBB5491F370840BA37884C8534C1031B01EECD8526A6F70A3114C"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\tests\\setup.js",
+        "sha256":  "8290E46672E5F7FE82F8ED991BB2BA84B1942595617583730E359C60816DCEFA"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\tests\\unit\\BannerCanvas.test.jsx",
+        "sha256":  "636DC76BB6D348DD83A65EEAA5D6F838019A6ED9A729B01C3C35EEE44D2153C6"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\utils\\performance.js",
+        "sha256":  "6EEA0A8425B0992D6AE1E8A20761BCB60BAAF56A01D6864E5F7C5B0FAA5CF932"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\utils\\permissions.js",
+        "sha256":  "1350286FD0EC6FD6E121F87D0D23B13233067BF1BA5D1641C3B6F73FD036993E"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\src\\utils\\security.js",
+        "sha256":  "02F44968C8ED954BD1EE5CE64B2E337435967937C6A91EA00C58A7C5C637E2CA"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\package.json",
+        "sha256":  "97F92A4138076909AF11550D4E76AD6B80804CAD77AE0807AA70364FD8694882"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\vite.config.js",
+        "sha256":  "F2321AA7125B68FDF5D0384FB93CD7A934B884E00B626192BDB95FDAF621978C"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\README.md",
+        "sha256":  "25768D3E3DD3E97389C7EB974B007C740A96AFC5F500663B0D06E9C74A204A17"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\docs\\BASELINE_FREEZE.md",
+        "sha256":  "80AFBE78808A4A9A673964BEC8B1BBBB2FBD1226DAB46C977E9B39E40A3487C2"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\docs\\BRANCH_STRATEGY.md",
+        "sha256":  "7F5694B1272C4F71BD7503B90FF4813BEA40D95CA0EE82BD84278DE08A3C4CD5"
+    },
+    {
+        "file":  "C:\\Users\\ELCOT\\Documents\\linkedin-banner-generator\\docs\\PRODUCTION_ROADMAP.md",
+        "sha256":  "F50B53CA067BAE335B3420B13107DB52159E0F02E5263B9DC977A07037CB9AE6"
+    }
+]

@@ -1,0 +1,63 @@
+# Deployment Architecture & Strategy
+
+## 1. Frontend Deployment (Vercel)
+
+We use Vercel for the frontend due to its seamless integration with Vite/React.
+
+### Configuration
+- **Repo Connection**: Connect GitHub repository to Vercel.
+- **Framework Preset**: Vite
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Environment Variables**:
+  - `VITE_API_URL`: URL of the deployed backend (e.g., `https://api.bannerstudio.com`)
+  - `VITE_CLOUDINARY_CLOUD_NAME`: For image optimization.
+
+### Routing
+We added [vercel.json](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/vercel.json) to handle SPA routing (redirecting all traffic to [index.html](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/index.html)):
+```json
+{
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+## 2. Backend Deployment (Render / Railway)
+
+For the future Node.js/Python backend:
+
+### Render.com Setup
+- **Type**: Web Service
+- **Build Command**: `npm install` (Node) or `pip install -r requirements.txt` (Python)
+- **Start Command**: `node start` or `uvicorn main:app --host 0.0.0.0`
+- **Environment Variables**:
+  - `DATABASE_URL`: Connection string to Supabase/Postgres.
+  - `JWT_SECRET`: Secret key for token signing.
+  - `CORS_ORIGIN`: `https://your-frontend.vercel.app`
+
+## 3. Database (Supabase)
+
+We recommend **Supabase** (PostgreSQL) for relational data.
+
+### Tables to Create
+- `users`: id, email, password_hash, plan
+- `projects`: id, user_id, title, design_data (JSONB), preview_url
+- `templates`: id, name, config (JSONB), thumbnail_url
+
+## 4. CI/CD Pipeline (GitHub Actions)
+
+Create `.github/workflows/deploy.yml` for automated testing before deploy:
+
+```yaml
+name: CI/CD
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with: { node-version: 18 }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+```

@@ -1,0 +1,45 @@
+# 💰 Monetization & Payments
+
+Architecture for the Freemium SaaS model.
+
+## 📦 Plans
+
+| Feature | Free Plan | Pro Plan (₹499/mo) |
+| :--- | :--- | :--- |
+| **Watermark** | Yes | **Removed** |
+| **Templates** | Basic Only | **All Premium** |
+| **Projects** | Limit 3 | **Unlimited** |
+| **Brand Kit** | No | **Yes** (Colors/Logos) |
+| **Export** | Standard (PNG) | High-Res (Retina PNG) |
+
+## 💳 Payment Flow (Razorpay)
+
+1.  **Initiate**: User clicks "Upgrade" -> Frontend calls `POST /api/billing/order`
+2.  **Order API**: Backend creates Razorpay Order -> Returns `order_id`.
+3.  **Checkout**: Frontend opens Razorpay Modal with `order_id`.
+4.  **Payment**: User pays -> Razorpay returns `payment_id` + `signature`.
+5.  **Verification**: Frontend calls `POST /api/billing/verify` with signature.
+6.  **Provisioning**: Backend verifies signature -> Updates User `plan = 'pro'` -> Returns new Token.
+
+## 🔐 Feature Gating (Frontend)
+
+We use a `useEntitlements` hook to check access permissions.
+
+```javascript
+// usage
+const { canUseFeature } = useEntitlements();
+
+if (!canUseFeature('brand_kit')) {
+  return <UpgradeLock feature="Brand Kit" />;
+}
+```
+
+## 🗄️ Database Schema (User Extension)
+
+```python
+class User(Base):
+    # ... existing fields
+    plan: str = "free"  # free, pro
+    billing_period_end: datetime = None
+    razorpay_customer_id: str = None
+```

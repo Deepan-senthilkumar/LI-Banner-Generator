@@ -1,0 +1,62 @@
+# 🗺️ Product Roadmap: LinkedIn Banner Studio
+
+This roadmap outlines the execution plan to transform the current prototype into a production-ready SaaS platform. The goal is to build a scalable, secure, and performant application using React (Frontend) and FastAPI (Backend).
+
+## 📅 Execution Phases
+
+### Phase 0: Setup Prerequisites (Current)
+- [x] Initial React + Vite setup
+- [x] Feature-based folder structure implementation
+- [x] Mock Services for rapid prototyping
+- [ ] **Backend Switch**: Initialize Python/FastAPI environment
+- [ ] **Testing Setup**: Configure Vitest (Frontend) & Pytest (Backend)
+
+### Phase 1: Foundation & Core Architecture
+**Complexity:** Medium | **Status:** In Progress
+- [x] **Routing**: React Router v6 setup with layouts
+- [x] **State**: Context API for Auth and Editor
+- [x] **UI**: Tailwind CSS v4 configuration
+- [ ] **Backend Core**: FastAPI app structure, CORS, Middleware
+- [ ] **Database**: PostgreSQL (Supabase) connection implementation (replacing mocks)
+
+### Phase 2: Editor MVP (The Core Value)
+**Complexity:** High | **Status:** Partially Complete
+- [x] **Canvas**: React-based banner rendering [BannerCanvas](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/src/features/editor/components/BannerCanvas.jsx#4-81)
+- [x] **Modes**: Beginner vs Advanced controls
+- [x] **Export**: `html2canvas` integration
+- [ ] **Performance**: Memoization of canvas components
+- [ ] **Input Handling**: Debounced inputs for smooth typing
+
+### Phase 3: Project System & Templates
+**Complexity:** Medium
+- [ ] **Templates**: JSON-based template schema & registry
+- [ ] **API**: `GET /templates` endpoint
+- [ ] **Persistence**: `POST /projects` to save designs to DB
+- [ ] **Dashboard**: Load user's saved projects from API
+
+### Phase 4: Authentication & User Accounts
+**Complexity:** Medium
+- [ ] **Frontend**: Complete Login/Signup forms with validation
+- [ ] **Backend**: JWT Implementation (Access + Refresh tokens)
+- [ ] **Security**: Password hashing (Argon2), Rate Limiting
+- [ ] **Protection**: Secure [ProtectedRoute](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/src/components/auth/ProtectedRoute.jsx#6-27) and API dependencies
+
+### Phase 5: Brand Kit & Onboarding
+**Complexity:** Medium
+- [ ] **Brand Assets**: Upload logos, define color palettes
+- [ ] **Storage**: S3/Cloudinary integration for user assets
+- [ ] **Onboarding**: "Tour" component for first-time editor users
+
+### Phase 6: Monetization (SaaS Features)
+**Complexity:** High
+- [ ] **Plans**: Free (Watermark), Pro (No Watermark, Brand Kit)
+- [ ] **Payment**: Razorpay integration (Order creation & Webhook)
+- [ ] **Entitlements**: `useEntitlements` hook to gate features
+- [ ] **UI**: Upgrade modal and Pricing page
+
+### Phase 7: Hardening & Deployment
+**Complexity:** Medium
+- [ ] **Testing**: E2E flows (Playwright), Unit tests (Vitest/Pytest)
+- [ ] **Security Audit**: XSS checks, Dependency scanning
+- [ ] **Optimization**: Code splitting, Image optimization
+- [ ] **CI/CD**: GitHub Actions for automated testing and deploy

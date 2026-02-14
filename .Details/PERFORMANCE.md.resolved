@@ -1,0 +1,36 @@
+# ⚡ Performance Optimization Plan
+
+Strategies to ensure LinkedIn Banner Studio runs smoothly on all devices.
+
+## 🚀 Frontend Optimizations
+
+### 1. Code Splitting (Lazy Loading)
+- **Routes**: Main pages are lazy loaded to reduce initial bundle size.
+```jsx
+const BannerEditor = lazy(() => import('./features/editor/BannerEditor'));
+```
+- **Heavy Components**: The [ControlsPanel](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/src/features/editor/components/ControlsPanel.jsx#6-210) (color pickers, sliders) is loaded only when Editor is active.
+
+### 2. Render Optimization
+- **Editor Canvas**: The [BannerCanvas](file:///c:/Users/ELCOT/Documents/linkedin-banner-generator/src/features/editor/components/BannerCanvas.jsx#4-81) is expensive.
+  - Usage of `React.memo` to prevent re-renders when only sidebar UI changes.
+  - `useDebounce` hook (300ms) for text inputs to avoid 60fps re-renders during typing.
+- **Virtualization**: If templates grow > 20, use `react-window` for the TemplatePicker.
+
+### 3. Asset Management
+- **Images**: Use WebP format where possible.
+- **Fonts**: Preconnect to Google Fonts; use `font-display: swap`.
+
+## ⚙️ Backend Optimizations
+
+### 1. Caching
+- **Templates**: The list of templates changes rarely. Cache `GET /templates` response in Redis or Memory (TTL: 1 hour).
+- **Static Assets**: CDN caching for all user-uploaded images.
+
+### 2. Database
+- **Indexing**: Index `user_id` on Projects table for fast dashboard loading.
+- **Connections**: Use pooling (SQLAlchemy `pool_size`) to handle concurrent users.
+
+### 3. Response Size
+- **Compression**: Enable Gzip/Brotli middleware in FastAPI.
+- **Partial Updates**: Use `PATCH` for saving projects to send only changed fields (delta updates).
