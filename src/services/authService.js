@@ -11,9 +11,14 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 const PROVIDER = import.meta.env.VITE_DATA_PROVIDER || 'local';
+const TOKEN_KEY = 'token';
 
 const normalizeRole = (role) => (role === ROLES.ADMIN ? ROLES.ADMIN : ROLES.USER);
 const asBoolean = (value) => value === true || value === 'true';
+const syncStoredToken = (token) => {
+  if (token) localStorage.setItem(TOKEN_KEY, token);
+  else localStorage.removeItem(TOKEN_KEY);
+};
 
 const normalizeSupabaseUser = (profile = {}, authUser = null) => {
   const isPro = asBoolean(profile.isPro ?? profile.is_pro) || profile.plan === 'pro';
@@ -100,7 +105,7 @@ export const authService = {
 
       if (user && (user.password === password || user.hashed_password)) {
         const token = `mock_token_${user.id}`;
-        localStorage.setItem('token', token);
+        syncStoredToken(token);
         return { user: { ...user, role: normalizeRole(user.role) }, token };
       }
       throw new Error('Invalid email or password');
@@ -116,7 +121,7 @@ export const authService = {
       if (error) throw new Error(error.message || 'Invalid email or password');
 
       const token = data.session?.access_token || '';
-      if (token) localStorage.setItem('token', token);
+      syncStoredToken(token);
 
       const user = await authService.getCurrentUser();
       if (!user) throw new Error('Login succeeded but user profile is not available');
@@ -135,7 +140,7 @@ export const authService = {
     });
 
     const token = data.access_token;
-    localStorage.setItem('token', token);
+    syncStoredToken(token);
 
     const user = await authService.getCurrentUser();
     return { user, token };
@@ -191,7 +196,7 @@ export const authService = {
       }
 
       if (data.session?.access_token) {
-        localStorage.setItem('token', data.session.access_token);
+        syncStoredToken(data.session.access_token);
       }
 
       if (data.user) {
@@ -220,7 +225,7 @@ export const authService = {
 
   getCurrentUser: async () => {
     if (PROVIDER === 'local') {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem(TOKEN_KEY);
       if (!token) return null;
 
       if (token.startsWith('mock_token_')) {
@@ -239,15 +244,13 @@ export const authService = {
       const session = data?.session;
       if (!session?.user) return null;
 
-      if (session.access_token) {
-        localStorage.setItem('token', session.access_token);
-      }
+      syncStoredToken(session.access_token || null);
 
       return ensureSupabaseProfile(supabase, session.user);
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem(TOKEN_KEY);
       if (!token) return null;
 
       const user = await apiClient.get(`${API_URL}/auth/me`, {
@@ -269,10 +272,42 @@ export const authService = {
       const supabase = getSupabaseClient();
       supabase.auth.signOut().catch(() => {});
     }
-    localStorage.removeItem('token');
+    syncStoredToken(null);
   },
 
-  getToken: () => localStorage.getItem('token'),
+  refreshSession: async () => {
+    if (PROVIDER !== 'supabase') return null;
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase.auth.refreshSession();
+    if (error) throw new Error(error.message || 'Failed to refresh auth session');
+    syncStoredToken(data?.session?.access_token || null);
+    return data?.session || null;
+  },
 
-  isAuthenticated: () => !!localStorage.getItem('token'),
+  subscribeToAuthChanges: (onUserChanged) => {
+    if (PROVIDER !== 'supabase') return () => {};
+
+    const supabase = getSupabaseClient();
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      try {
+        syncStoredToken(session?.access_token || null);
+        if (!session?.user) {
+          onUserChanged(null);
+          return;
+        }
+        const user = await ensureSupabaseProfile(supabase, session.user);
+        onUserChanged(user);
+      } catch (error) {
+        console.error('Failed to process auth state change', error);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  },
+
+  getToken: () => localStorage.getItem(TOKEN_KEY),
+
+  isAuthenticated: () => !!localStorage.getItem(TOKEN_KEY),
 };

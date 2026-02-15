@@ -22,6 +22,16 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = authService.subscribeToAuthChanges((nextUser) => {
+      setUser(normalizeUserRole(nextUser));
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   const login = async (email, password) => {
     setLoading(true);
     try {

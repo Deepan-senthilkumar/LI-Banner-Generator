@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { EditorProvider, useEditor } from './context/EditorContext';
 import { useAuth } from '../../context/AuthContext';
@@ -45,6 +45,22 @@ const EditorContent = () => {
         return () => window.removeEventListener('keydown', onKeyDown);
     }, [undo, redo, canUndo, canRedo]);
 
+    const fetchProject = useCallback(async (id) => {
+        setLoadingProject(true);
+        try {
+            const project = await projectService.getById(id);
+            if (project) {
+                 loadProject(project);
+            } else {
+                navigate('/app/designs'); // Redirect if not found
+            }
+        } catch (error) {
+            console.error("Failed to load project", error);
+        } finally {
+            setLoadingProject(false);
+        }
+    }, [loadProject, navigate]);
+
     // Load project if route ID exists and is different from current context
     useEffect(() => {
         if (routeProjectId && routeProjectId !== 'new' && routeProjectId !== projectId) {
@@ -66,23 +82,7 @@ const EditorContent = () => {
                 }
             }
         }
-    }, [routeProjectId]);
-
-    const fetchProject = async (id) => {
-        setLoadingProject(true);
-        try {
-            const project = await projectService.getById(id);
-            if (project) {
-                 loadProject(project);
-            } else {
-                navigate('/app/designs'); // Redirect if not found
-            }
-        } catch (error) {
-            console.error("Failed to load project", error);
-        } finally {
-            setLoadingProject(false);
-        }
-    };
+    }, [routeProjectId, projectId, fetchProject, dispatch]);
 
     const generatePreview = async () => {
         if (!canvasRef.current) return null;

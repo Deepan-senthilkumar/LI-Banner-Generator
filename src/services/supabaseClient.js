@@ -17,6 +17,8 @@ export const getSupabaseClient = () => {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
+      flowType: 'pkce',
+      storageKey: 'linkedin-banner-studio-auth',
     },
   });
 

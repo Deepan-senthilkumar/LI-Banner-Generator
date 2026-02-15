@@ -1,24 +1,25 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from typing import Literal
+from fastapi import APIRouter, Request
+from pydantic import BaseModel, Field
 import time
 import random
+from app.core.rate_limiter import limiter
 
 router = APIRouter()
 
 class TextGenRequest(BaseModel):
-    context: str # e.g., "Software Engineer", "Marketing Guru"
-    type: str # "headline", "tagline", "about"
+    context: str = Field(min_length=2, max_length=180) # e.g., "Software Engineer", "Marketing Guru"
+    type: Literal["headline", "tagline", "about"]
 
 class ImageGenRequest(BaseModel):
-    prompt: str
+    prompt: str = Field(min_length=3, max_length=320)
 
 @router.post("/generate-text")
-def generate_text(request: TextGenRequest):
+@limiter.limit("30/minute")
+def generate_text(http_request: Request, request: TextGenRequest):
     # Simulate AI processing time
     time.sleep(1.5)
-    
-    context = request.context.lower()
-    
+
     if request.type == "headline":
         headlines = [
             f"Transforming Ideas into {request.context} Reality",
@@ -40,7 +41,8 @@ def generate_text(request: TextGenRequest):
     return {"result": f"AI generated text for {request.context}"}
 
 @router.post("/generate-image")
-def generate_image(request: ImageGenRequest):
+@limiter.limit("20/minute")
+def generate_image(http_request: Request, request: ImageGenRequest):
     # Simulate AI processing time
     time.sleep(2.0)
     

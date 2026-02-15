@@ -1,18 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { X, ChevronRight } from 'lucide-react';
 
 const Tour = ({ steps, tourKey, onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [position, setPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     const hasSeenTour = localStorage.getItem(`tour_${tourKey}`);
     if (!hasSeenTour) {
         // Small delay to allow UI to render
-        setTimeout(() => setIsVisible(true), 1000);
+        const timer = window.setTimeout(() => setIsVisible(true), 1000);
+        return () => window.clearTimeout(timer);
     }
+    return undefined;
   }, [tourKey]);
+
+  const position = useMemo(() => {
+    if (!isVisible || !steps[currentStep]) {
+      return { top: 0, left: 0 };
+    }
+
+    const targetId = steps[currentStep].target;
+    const target = document.getElementById(targetId);
+    if (!target) return { top: 0, left: 0 };
+
+    const rect = target.getBoundingClientRect();
+    return {
+      top: rect.bottom + window.scrollY + 10,
+      left: Math.max(10, Math.min(rect.left + window.scrollX, window.innerWidth - 320)),
+    };
+  }, [isVisible, currentStep, steps]);
 
   useEffect(() => {
     if (isVisible && steps[currentStep]) {
@@ -20,13 +37,6 @@ const Tour = ({ steps, tourKey, onComplete }) => {
         const target = document.getElementById(targetId);
         
         if (target) {
-            const rect = target.getBoundingClientRect();
-            // Simple positioning logic (centered below or safely on screen)
-            setPosition({
-                top: rect.bottom + window.scrollY + 10,
-                left: Math.max(10, Math.min(rect.left + window.scrollX, window.innerWidth - 320))
-            });
-            
             // Highlight effect
             target.style.zIndex = '51';
             target.style.position = 'relative'; // Ensure z-index works
