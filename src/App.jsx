@@ -28,6 +28,7 @@ const About = lazy(() => import('./pages/public/About'));
 const Contact = lazy(() => import('./pages/public/Contact'));
 const PrivacyPolicy = lazy(() => import('./pages/public/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/public/TermsOfService'));
+const SharePreview = lazy(() => import('./pages/public/SharePreview'));
 
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const AdminUsers = lazy(() => import('./pages/admin/Users'));
@@ -55,6 +56,7 @@ function App() {
             <Route path="/contact" element={<><Navbar /><Contact /></>} />
             <Route path="/privacy" element={<><Navbar /><PrivacyPolicy /></>} />
             <Route path="/terms" element={<><Navbar /><TermsOfService /></>} />
+            <Route path="/share/:shareId" element={<SharePreview />} />
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />

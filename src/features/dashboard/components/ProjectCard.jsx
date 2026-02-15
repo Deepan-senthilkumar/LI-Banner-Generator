@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MoreVertical, Edit2, Copy, Trash2, Download } from 'lucide-react';
+import { MoreVertical, Edit2, Copy, Trash2, Share2, Loader2 } from 'lucide-react';
 
-const ProjectCard = ({ project, onDelete, onDuplicate }) => {
+const ProjectCard = ({ project, onDelete, onDuplicate, onShare, isSharing = false }) => {
   const [showMenu, setShowMenu] = React.useState(false);
 
   return (
@@ -62,6 +62,17 @@ const ProjectCard = ({ project, onDelete, onDuplicate }) => {
                   className="w-full flex items-center gap-2 px-4 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                 >
                   <Copy size={16} /> Duplicate
+                </button>
+                <button
+                  onClick={async () => {
+                    setShowMenu(false);
+                    if (onShare) await onShare(project.id);
+                  }}
+                  disabled={!onShare || isSharing}
+                  className="w-full flex items-center gap-2 px-4 py-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50"
+                >
+                  {isSharing ? <Loader2 size={16} className="animate-spin" /> : <Share2 size={16} />}
+                  {isSharing ? 'Creating link...' : 'Share'}
                 </button>
                 <div className="h-px bg-slate-100 dark:bg-slate-800 my-1" />
                 <button 
