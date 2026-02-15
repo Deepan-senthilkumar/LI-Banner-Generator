@@ -1,5 +1,5 @@
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowRight,
@@ -75,7 +75,7 @@ const ToolWorkspace = () => {
     notify._timer = window.setTimeout(() => setStatus(''), 2200);
   };
 
-  const loadCoreData = async () => {
+  const loadCoreData = useCallback(async () => {
     setLoading(true);
     const [drafts, decks, swipes, streakState, leads, integrationsState] = await Promise.all([
       growthToolsService.getPostDrafts(userId),
@@ -92,11 +92,15 @@ const ToolWorkspace = () => {
     setCrmLeads(leads);
     setIntegrations(integrationsState);
     setLoading(false);
-  };
+  }, [userId]);
 
   useEffect(() => {
-    loadCoreData();
-  }, [userId]);
+    const timer = window.setTimeout(() => {
+      loadCoreData();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [loadCoreData]);
 
   useEffect(() => {
     if (!growthToolsById[toolId] && toolId) {

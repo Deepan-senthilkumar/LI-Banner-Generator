@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { templateService } from '../../services/templateService';
 import entitlementsService from '../../services/entitlementsService';
@@ -24,11 +24,7 @@ const TemplateLibrary = () => {
   const [search, setSearch] = useState('');
   const [tagFilter, setTagFilter] = useState('');
 
-  useEffect(() => {
-    loadTemplates();
-  }, [filter, sortBy, search, tagFilter]);
-
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     setLoading(true);
     try {
       const data = await templateService.getMarketplaceTemplates({
@@ -44,7 +40,11 @@ const TemplateLibrary = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, filter, sortBy, tagFilter]);
+
+  useEffect(() => {
+    loadTemplates();
+  }, [loadTemplates]);
 
   const allTags = useMemo(() => {
     const tags = new Set();

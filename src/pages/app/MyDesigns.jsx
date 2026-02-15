@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { projectService } from '../../services/projectService';
 import { shareService } from '../../services/shareService';
@@ -15,13 +15,8 @@ const MyDesigns = () => {
   const [shareMessage, setShareMessage] = useState('');
   const [shareError, setShareError] = useState('');
 
-  useEffect(() => {
-    if (user?.id) {
-        loadProjects();
-    }
-  }, [user]);
-
-  const loadProjects = async () => {
+  const loadProjects = useCallback(async () => {
+    if (!user?.id) return;
     try {
       const data = await projectService.getByUser(user.id); // Assuming getByUser exists now or mock it
       setProjects(data || []);
@@ -30,7 +25,13 @@ const MyDesigns = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (user?.id) {
+        loadProjects();
+    }
+  }, [user?.id, loadProjects]);
 
   const handleDelete = async (id) => {
     if (confirm('Delete this design permanently?')) {

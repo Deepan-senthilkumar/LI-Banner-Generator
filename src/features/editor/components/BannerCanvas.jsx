@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useEditor } from '../context/EditorContext';
 
 const CANVAS_WIDTH = 1584;
@@ -62,20 +62,22 @@ const BannerCanvas = memo(({ canvasRef }) => {
     pushUndoCheckpoint,
   } = useEditor();
   const { config } = state;
-  const selectedAssetIds = state.selectedAssetIds?.length
-    ? state.selectedAssetIds
-    : (state.selectedAssetId ? [state.selectedAssetId] : []);
+  const selectedAssetIds = useMemo(() => (
+    state.selectedAssetIds?.length
+      ? state.selectedAssetIds
+      : (state.selectedAssetId ? [state.selectedAssetId] : [])
+  ), [state.selectedAssetIds, state.selectedAssetId]);
 
   const { text, style } = config;
   const backgroundImage = style.backgroundImage || { url: null, opacity: 0.28 };
-  const visualAssets = style.assets || [];
+  const visualAssets = useMemo(() => style.assets || [], [style.assets]);
   const interactionRef = useRef(null);
   const [snapGuides, setSnapGuides] = useState([]);
   const [spacingGuides, setSpacingGuides] = useState([]);
 
   const selectedSet = useMemo(() => new Set(selectedAssetIds), [selectedAssetIds]);
 
-  const normalizeAsset = (asset) => ({
+  const normalizeAsset = useCallback((asset) => ({
     type: 'image',
     name: 'Asset',
     opacity: 0.9,
@@ -86,6 +88,15 @@ const BannerCanvas = memo(({ canvasRef }) => {
     blendMode: 'normal',
     flipX: false,
     flipY: false,
+    blur: 0,
+    brightness: 100,
+    contrast: 100,
+    saturate: 100,
+    shadow: false,
+    shadowColor: 'rgba(0,0,0,0.35)',
+    shadowBlur: 18,
+    shadowOffsetX: 0,
+    shadowOffsetY: 10,
     x: 120,
     y: 50,
     width: 210,
@@ -105,9 +116,9 @@ const BannerCanvas = memo(({ canvasRef }) => {
     strokeColor: 'rgba(255,255,255,0.8)',
     strokeWidth: 2,
     ...asset,
-  });
+  }), [style.fontFamily]);
 
-  const collectSnapTargets = (excludedIds = new Set()) => {
+  const collectSnapTargets = useCallback((excludedIds = new Set()) => {
     const vertical = [
       { value: 0, label: 'canvas-left' },
       { value: CANVAS_WIDTH / 2, label: 'canvas-center' },
@@ -147,9 +158,9 @@ const BannerCanvas = memo(({ canvasRef }) => {
     });
 
     return { vertical, horizontal };
-  };
+  }, [style.canvasGuides, visualAssets, normalizeAsset]);
 
-  const findBestSnap = (candidates, targets) => {
+  const findBestSnap = useCallback((candidates, targets) => {
     let best = null;
     candidates.forEach((candidate) => {
       targets.forEach((target) => {
@@ -168,9 +179,9 @@ const BannerCanvas = memo(({ canvasRef }) => {
       });
     });
     return best;
-  };
+  }, []);
 
-  const buildSpacingGuides = (movingBounds, excludedIds = new Set()) => {
+  const buildSpacingGuides = useCallback((movingBounds, excludedIds = new Set()) => {
     if (!style.canvasGuides?.spacing) return [];
 
     const others = visualAssets
@@ -266,21 +277,21 @@ const BannerCanvas = memo(({ canvasRef }) => {
     }
 
     return guides;
-  };
+  }, [style.canvasGuides, visualAssets, normalizeAsset]);
 
-  const updateAssets = (nextAssets, options = {}) => {
+  const updateAssets = useCallback((nextAssets, options = {}) => {
     updateStyle('assets', nextAssets, options);
-  };
+  }, [updateStyle]);
 
-  const updateAssetById = (assetId, updater, options = {}) => {
+  const updateAssetById = useCallback((assetId, updater, options = {}) => {
     const nextAssets = visualAssets.map((asset) => {
       if (asset.id !== assetId) return asset;
       return typeof updater === 'function' ? updater(asset) : { ...asset, ...updater };
     });
     updateAssets(nextAssets, options);
-  };
+  }, [visualAssets, updateAssets]);
 
-  const updateSelectedAssets = (updater, options = {}) => {
+  const updateSelectedAssets = useCallback((updater, options = {}) => {
     const selectedIds = new Set(selectedAssetIds);
     if (!selectedIds.size) return;
 
@@ -292,14 +303,14 @@ const BannerCanvas = memo(({ canvasRef }) => {
       return { ...asset, ...updater };
     });
     updateAssets(nextAssets, options);
-  };
+  }, [selectedAssetIds, visualAssets, normalizeAsset, updateAssets]);
 
-  const removeAssets = (assetIds) => {
+  const removeAssets = useCallback((assetIds) => {
     if (!assetIds.length) return;
     const removeSet = new Set(assetIds);
     updateAssets(visualAssets.filter((asset) => !removeSet.has(asset.id)));
     clearSelectedAssets();
-  };
+  }, [visualAssets, updateAssets, clearSelectedAssets]);
 
   const getScale = () => {
     if (!canvasRef.current) return 1;
@@ -307,13 +318,13 @@ const BannerCanvas = memo(({ canvasRef }) => {
     return rect.width > 0 ? rect.width / CANVAS_WIDTH : 1;
   };
 
-  const toCanvasPoint = (clientX, clientY, scale) => {
+  const toCanvasPoint = useCallback((clientX, clientY, scale) => {
     const rect = canvasRef.current.getBoundingClientRect();
     return {
       x: (clientX - rect.left) / scale,
       y: (clientY - rect.top) / scale,
     };
-  };
+  }, [canvasRef]);
 
   const beginAssetInteraction = (event, rawAsset, mode) => {
     event.stopPropagation();
@@ -514,7 +525,7 @@ const BannerCanvas = memo(({ canvasRef }) => {
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('pointerup', onPointerUp);
     };
-  }, [visualAssets, style.canvasGuides]);
+  }, [buildSpacingGuides, collectSnapTargets, findBestSnap, style.canvasGuides, toCanvasPoint, updateAssetById, updateAssets, visualAssets]);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -575,7 +586,7 @@ const BannerCanvas = memo(({ canvasRef }) => {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [selectedAssetIds, visualAssets]);
+  }, [clearSelectedAssets, normalizeAsset, removeAssets, selectedAssetIds, setSelectedAssets, updateAssets, updateSelectedAssets, visualAssets]);
 
   const containerStyle = {
     width: `${CANVAS_WIDTH}px`,
@@ -606,15 +617,21 @@ const BannerCanvas = memo(({ canvasRef }) => {
   };
 
   const renderAssetInner = (asset, isSelected) => {
+    const visualFilter = `blur(${asset.blur || 0}px) brightness(${asset.brightness || 100}%) contrast(${asset.contrast || 100}%) saturate(${asset.saturate || 100}%)`;
+    const customShadow = asset.shadow
+      ? `${asset.shadowOffsetX || 0}px ${asset.shadowOffsetY || 10}px ${asset.shadowBlur || 18}px ${asset.shadowColor || 'rgba(0,0,0,0.35)'}`
+      : '0 12px 28px rgba(0,0,0,0.25)';
+
     const commonBoxStyle = {
       width: '100%',
       height: '100%',
       opacity: asset.opacity ?? 0.9,
       border: isSelected ? '2px solid #2563eb' : '1px solid rgba(255,255,255,0.16)',
-      boxShadow: '0 12px 28px rgba(0,0,0,0.25)',
+      boxShadow: customShadow,
       mixBlendMode: asset.blendMode || 'normal',
       transform: `scale(${asset.flipX ? -1 : 1}, ${asset.flipY ? -1 : 1})`,
       transformOrigin: 'center',
+      filter: visualFilter,
     };
 
     if (asset.type === 'text') {

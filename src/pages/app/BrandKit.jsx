@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { brandService } from '../../services/brandService';
 import ColorPaletteManager from '../../features/brand/components/ColorPaletteManager';
@@ -15,11 +15,8 @@ const BrandKit = () => {
       logos: []
   });
 
-  useEffect(() => {
-      if(user) loadBrandKit();
-  }, [user]);
-
-  const loadBrandKit = async () => {
+  const loadBrandKit = useCallback(async () => {
+      if (!user?.id) return;
       try {
           const data = await brandService.getBrandKit(user.id);
           setBrandData(data);
@@ -28,7 +25,11 @@ const BrandKit = () => {
       } finally {
           setLoading(false);
       }
-  };
+  }, [user?.id]);
+
+  useEffect(() => {
+      if(user) loadBrandKit();
+  }, [user, loadBrandKit]);
 
   const handleSave = async () => {
       setSaving(true);

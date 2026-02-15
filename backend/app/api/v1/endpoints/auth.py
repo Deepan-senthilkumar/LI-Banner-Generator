@@ -1,11 +1,12 @@
 from datetime import timedelta
 from typing import Any
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from app.api import deps
 from app.core import security
 from app.core.config import settings
+from app.core.rate_limiter import limiter
 from app.models.user import User
 from app.schemas.user import UserCreate, User as UserSchema
 from app.schemas.token import Token
@@ -13,10 +14,13 @@ from app.schemas.token import Token
 router = APIRouter()
 
 @router.post("/login", response_model=Token)
+@limiter.limit("12/minute")
 def login_access_token(
+    request: Request,
     db: Session = Depends(deps.get_db), form_data: OAuth2PasswordRequestForm = Depends()
 ) -> Any:
-    user = db.query(User).filter(User.email == form_data.username).first()
+    username = (form_data.username or "").strip().lower()
+    user = db.query(User).filter(User.email == username).first()
     if not user or not security.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect email or password")
     elif not user.is_active:
@@ -31,7 +35,9 @@ def login_access_token(
     }
 
 @router.post("/register", response_model=UserSchema)
+@limiter.limit("6/minute")
 def register_user(
+    request: Request,
     *,
     db: Session = Depends(deps.get_db),
     user_in: UserCreate,

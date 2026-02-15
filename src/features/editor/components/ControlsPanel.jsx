@@ -40,9 +40,11 @@ const ControlsPanel = () => {
   const { user } = useAuth();
   const { config, mode } = state;
 
-  const selectedAssetIds = state.selectedAssetIds?.length
-    ? state.selectedAssetIds
-    : (state.selectedAssetId ? [state.selectedAssetId] : []);
+  const selectedAssetIds = useMemo(() => (
+    state.selectedAssetIds?.length
+      ? state.selectedAssetIds
+      : (state.selectedAssetId ? [state.selectedAssetId] : [])
+  ), [state.selectedAssetIds, state.selectedAssetId]);
 
   const assets = config.style.assets || [];
   const selectedSet = useMemo(() => new Set(selectedAssetIds), [selectedAssetIds]);
@@ -89,6 +91,15 @@ const ControlsPanel = () => {
     blendMode: 'normal',
     flipX: false,
     flipY: false,
+    blur: 0,
+    brightness: 100,
+    contrast: 100,
+    saturate: 100,
+    shadow: false,
+    shadowColor: 'rgba(0,0,0,0.35)',
+    shadowBlur: 18,
+    shadowOffsetX: 0,
+    shadowOffsetY: 10,
     text: 'Edit text',
     color: '#ffffff',
     fontSize: 44,
@@ -235,6 +246,47 @@ const ControlsPanel = () => {
     const gap = (end - start) / (sorted.length - 1);
     const byId = Object.fromEntries(sorted.map((asset, idx) => [asset.id, Math.round(start + gap * idx)]));
     updateSelectedAssets((asset) => ({ ...asset, [axis]: byId[asset.id] }));
+  };
+
+  const applySelectedEffectPreset = (preset) => {
+    if (!selectedAssets.length) return;
+
+    if (preset === 'clean') {
+      updateSelectedAssets({
+        opacity: 1,
+        blur: 0,
+        brightness: 100,
+        contrast: 100,
+        saturate: 100,
+        shadow: false,
+      });
+      return;
+    }
+
+    if (preset === 'cinematic') {
+      updateSelectedAssets({
+        opacity: 0.92,
+        blur: 0,
+        brightness: 92,
+        contrast: 112,
+        saturate: 118,
+        shadow: true,
+        shadowBlur: 24,
+        shadowOffsetY: 14,
+      });
+      return;
+    }
+
+    if (preset === 'soft') {
+      updateSelectedAssets({
+        opacity: 0.95,
+        blur: 1,
+        brightness: 106,
+        contrast: 92,
+        saturate: 92,
+        shadow: false,
+      });
+    }
   };
 
   const toggleGuide = (guideName) => {
@@ -466,10 +518,67 @@ const ControlsPanel = () => {
 
                   {selectedAsset && (
                     <>
-                      <div className="grid grid-cols-2 gap-2">
-                        <input type="number" value={Math.round(selectedAsset.x)} onChange={(e) => updateAssetById(selectedAsset.id, { x: Number(e.target.value || 0) })} className="rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
-                        <input type="number" value={Math.round(selectedAsset.y)} onChange={(e) => updateAssetById(selectedAsset.id, { y: Number(e.target.value || 0) })} className="rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                      <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500">
+                        <label className="space-y-1">
+                          <span>X</span>
+                          <input type="number" value={Math.round(selectedAsset.x)} onChange={(e) => updateAssetById(selectedAsset.id, { x: Number(e.target.value || 0) })} className="w-full rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                        </label>
+                        <label className="space-y-1">
+                          <span>Y</span>
+                          <input type="number" value={Math.round(selectedAsset.y)} onChange={(e) => updateAssetById(selectedAsset.id, { y: Number(e.target.value || 0) })} className="w-full rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                        </label>
+                        <label className="space-y-1">
+                          <span>Width</span>
+                          <input type="number" min={20} value={Math.round(selectedAsset.width || 0)} onChange={(e) => updateAssetById(selectedAsset.id, { width: Math.max(20, Number(e.target.value || 0)) })} className="w-full rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                        </label>
+                        <label className="space-y-1">
+                          <span>Height</span>
+                          <input type="number" min={20} value={Math.round(selectedAsset.height || 0)} onChange={(e) => updateAssetById(selectedAsset.id, { height: Math.max(20, Number(e.target.value || 0)) })} className="w-full rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                        </label>
                       </div>
+
+                      <div className="grid grid-cols-3 gap-2">
+                        <button onClick={() => applySelectedEffectPreset('clean')} className="py-1 rounded-md text-xs border border-slate-300 dark:border-slate-700">Clean</button>
+                        <button onClick={() => applySelectedEffectPreset('soft')} className="py-1 rounded-md text-xs border border-slate-300 dark:border-slate-700">Soft</button>
+                        <button onClick={() => applySelectedEffectPreset('cinematic')} className="py-1 rounded-md text-xs border border-slate-300 dark:border-slate-700">Cinematic</button>
+                      </div>
+
+                      <div className="space-y-2 text-[11px]">
+                        <label className="block text-slate-500">Opacity</label>
+                        <input type="range" min={0} max={1} step={0.01} value={selectedAsset.opacity ?? 1} onChange={(e) => updateAssetById(selectedAsset.id, { opacity: Number(e.target.value) })} className="w-full accent-blue-600" />
+                        <label className="block text-slate-500">Rotation</label>
+                        <input type="range" min={-180} max={180} step={1} value={selectedAsset.rotation || 0} onChange={(e) => updateAssetById(selectedAsset.id, { rotation: Number(e.target.value) })} className="w-full accent-blue-600" />
+                        <label className="block text-slate-500">Blur</label>
+                        <input type="range" min={0} max={20} step={0.5} value={selectedAsset.blur || 0} onChange={(e) => updateAssetById(selectedAsset.id, { blur: Number(e.target.value) })} className="w-full accent-blue-600" />
+                        <label className="block text-slate-500">Brightness</label>
+                        <input type="range" min={40} max={180} step={1} value={selectedAsset.brightness || 100} onChange={(e) => updateAssetById(selectedAsset.id, { brightness: Number(e.target.value) })} className="w-full accent-blue-600" />
+                        <label className="block text-slate-500">Contrast</label>
+                        <input type="range" min={40} max={180} step={1} value={selectedAsset.contrast || 100} onChange={(e) => updateAssetById(selectedAsset.id, { contrast: Number(e.target.value) })} className="w-full accent-blue-600" />
+                        <label className="block text-slate-500">Saturation</label>
+                        <input type="range" min={0} max={200} step={1} value={selectedAsset.saturate || 100} onChange={(e) => updateAssetById(selectedAsset.id, { saturate: Number(e.target.value) })} className="w-full accent-blue-600" />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button onClick={() => updateAssetById(selectedAsset.id, { flipX: !selectedAsset.flipX })} className="py-1 rounded-md text-xs border border-slate-300 dark:border-slate-700">{selectedAsset.flipX ? 'Unflip X' : 'Flip X'}</button>
+                        <button onClick={() => updateAssetById(selectedAsset.id, { flipY: !selectedAsset.flipY })} className="py-1 rounded-md text-xs border border-slate-300 dark:border-slate-700">{selectedAsset.flipY ? 'Unflip Y' : 'Flip Y'}</button>
+                      </div>
+
+                      <div className="space-y-2">
+                        <button onClick={() => updateAssetById(selectedAsset.id, { shadow: !selectedAsset.shadow })} className="w-full py-1 rounded-md text-xs border border-slate-300 dark:border-slate-700">{selectedAsset.shadow ? 'Disable Shadow' : 'Enable Shadow'}</button>
+                        {selectedAsset.shadow && (
+                          <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500">
+                            <label className="space-y-1">
+                              <span>Shadow Blur</span>
+                              <input type="number" min={0} max={80} value={Math.round(selectedAsset.shadowBlur || 0)} onChange={(e) => updateAssetById(selectedAsset.id, { shadowBlur: Number(e.target.value || 0) })} className="w-full rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                            </label>
+                            <label className="space-y-1">
+                              <span>Shadow Y</span>
+                              <input type="number" min={-80} max={80} value={Math.round(selectedAsset.shadowOffsetY || 0)} onChange={(e) => updateAssetById(selectedAsset.id, { shadowOffsetY: Number(e.target.value || 0) })} className="w-full rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                            </label>
+                          </div>
+                        )}
+                      </div>
+
                       {selectedAsset.type === 'text' && (
                         <textarea rows={3} value={selectedAsset.text || ''} onChange={(e) => updateAssetById(selectedAsset.id, { text: e.target.value })} className="w-full rounded-md px-2 py-1 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-slate-200" />
                       )}
